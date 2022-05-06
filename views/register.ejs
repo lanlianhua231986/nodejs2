@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <style>
+      img {
+        width: 100px;
+        height: 100px;
+      }
+      .dn {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <input type="file" id="uploadImg" />
+    <img id="img" src="" alt="" class="dn" />
+    <div>用户名: <input type="text" id="username" /></div>
+    <div>密码: <input type="text" id="password" /></div>
+    <input type="button" id="register" value="注册" />
+  </body>
+  <script>
+    //   上传图片  change方法不是click方法
+    $("#uploadImg").change(function () {
+      const file = $("#uploadImg")[0].files[0];
+      var formdata = new FormData(); // 图片上传需要使用FormData对象
+      formdata.append("avatar", file);
+      $.ajax({
+        url: "/upload",
+        type: "post",
+        data: formdata,
+        contentType: false,
+        processData: false,
+        success: (res) => {
+          if (res.code == 200) {
+            $("#img")
+              .removeClass("dn")
+              .attr("src", "http://localhost:8888/" + res.path);
+          }
+        },
+      });
+    });
+    // 点击注册
+    $("#register").click(function () {
+      var imgurl = $("#img").attr("src");
+      var username = $("#username").val();
+      var password = $("#password").val();
+      $.post("/doregister", { imgurl, username, password }).then((res) => {
+        alert(res.msg); // 不管成功失败，都会把信息弹出来
+        if (res.code == 200) {
+          // 表示成功，页面跳转到登陆页面
+          location.href = "/login";
+        } else {
+          $("#username").val("");
+          $("#password").val("");
+          // 同时光标获取焦点
+          $("#username").focus();
+        }
+      });
+    });
+  </script>
+</html>

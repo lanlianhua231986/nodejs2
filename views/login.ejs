@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <style>
+      .show {
+        color: red;
+      }
+      .dn {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      用户名: <input type="text" id="username" /><span class="show dn"
+        >用户名不存在</span
+      >
+    </div>
+    <div>密码: <input type="text" id="password" /></div>
+    <div><input type="button" id="login" value="登录" /></div>
+  </body>
+  <script>
+    // $("#username").blur(function () {
+    //   var username = $("#username").val();
+    //   $.post("/checkusername", { username }).then((res) => {
+    //     console.log(res);
+    //     if (res.code != 200) {
+    //       $(".show").removeClass("dn");
+    //       setTimeout(() => {
+    //         $("#username").val("");
+    //         $("#username").focus();
+    //         $(".show").addClass("dn");
+    //       }, 1000);
+    //     }
+    //   });
+    // });
+    $("#login").click(function () {
+      var username = $("#username").val();
+      var password = $("#password").val();
+      //   发送ajax请求
+      $.post("/dologin", { username, password }).then((res) => {
+        console.log(res);
+        alert(res.msg);
+        if (res.code == 200) {
+          location.href = "/";
+        } else if (res.code == 201) {
+          $("#username").val(""); // 清空用户名
+          $("#password").val(""); // 清空密码
+          $("#username").focus(); // 获取光标
+        }
+      });
+    });
+  </script>
+</html>
